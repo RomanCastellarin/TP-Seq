@@ -1,0 +1,36 @@
+Sequences as Arr
+
+Proofs of complexities:
+
+emptyS and singletonS:
+  W is O(1):
+    fromlist is O(|x|) and x is constant, hence so is the number of operations.
+  S is O(1):
+    S is O(W).
+    
+lengthS, nthS:   
+  W is O(1):
+    by definition, as they are synonyms of Arr.length and Arr.!
+  S is O(1):
+    by definition, as they are synonyms of Arr.length and Arr.!
+    
+tabulateS
+  W is O(sum{W(f i) : 1<=i<=n}):
+    by definition, as it's a synonym of Arr.tabulate
+  S is O(max{S(f i) : 1<=i<=n}):
+    by definition, as it's a synonym of Arr.tabulate
+ 
+mapS:
+  it's tabulateS g |s| with g n = f (s ! n)
+  W is O(sum{W(f s[i]) : 1<=i<=n}):
+    W{g n} is O(W(f s[n])) (as ! is O(1) in W) 
+  S is O(max{S(f s[i]) : 1<=i<=n}):
+    S{g n} is O(S(f s[n])) (as ! is O(1) in S)
+          
+filterS   
+appendS   
+takeS     
+dropS     
+showtS    
+showlS    
+
