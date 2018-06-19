@@ -20,7 +20,7 @@ instance Seq [] where
     showlS          = showlL
     joinS           = joinL
     reduceS         = reduceL
-    scanS           = scanL
+    -- scanS           = scanL
     fromList        = id
 
 emptyL = []
@@ -69,10 +69,10 @@ contractL f [x]      = [x]
 contractL f (x:y:xs) = let (x',xs') = f x y ||| contractL f xs
                         in x':xs'
 
-
-reduceL f e []         = e
-reduceL f e [x]        = x
-reduceL f e s@(x:y:xs) = reduceL f e (contractL f s)
+reduceL f e s = f e (reduceLAux f e s)
+reduceLAux f e []         = e
+reduceLAux f e [x]        = x
+reduceLAux f e s@(x:y:xs) = reduceLAux f e (contractL f s)
 
 
 expandL f [] _             = []
@@ -81,13 +81,16 @@ expandL f (x:xs) [y]       = x:[f x y]
 expandL f (x:xs) (y:y':ys) = x:(f x y):expandL f xs ys
 
 
-scanL f e []  = ([],e)
-scanL f e [x] = ([x],e)
-scanL f e s   = let (l,h) = scanL f e (contractL f s)
-                in (expandL f l s, h)
+-- scanL
 
 
--- scanL (\x->(\y->x++"+"++y)) "E" (fromList ["0", "1", "2", "3", "4"])
+
+
+-- scanL (\x->(\y->x++"+"++y)) "E" ["0", "1"]
+
+
+
+-- scanL (\x->(\y->"("++x++"+"++y++"")) "E" (fromList ["0", "1", "2", "3", "4"])
 
 {- 
     -- Actually worse
