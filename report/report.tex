@@ -6,6 +6,9 @@
 \usepackage{booktabs}
 \usepackage[table,xcdraw]{xcolor}
 \usepackage{ltxtable}
+\usepackage{listings}
+\lstset{language=Haskell}
+\usepackage{color}
 \begin{document}
 \begin{titlepage}
 
@@ -30,16 +33,15 @@ Ingeniería y Agrimensura\\}
 \vspace{0.5cm}
 
 \begin{center}
-\normalsize{\sc R-322 Sistemas Operativos I}\\
+\normalsize{\sc Estructuras de Datos II}\\
 \vspace{0.5cm}
-\large{Trabajo Práctico Final}\\
+\large{Trabajo Práctico II}\\
 
-\Large{\bf Servidor de Juegos Distribuido}\\
+\Large{\bf Secuencias}\\
 \vspace{5cm}
 
 \normalsize
 Román Castellarin\\
-Maximiliano Redigonda\\
 Juan Ignacio Suarez\\
 
 \vspace*{0.5cm}
@@ -51,6 +53,40 @@ Juan Ignacio Suarez\\
 \newpage
 \section{Introducción}
 
+\subsection*{Implementacion basada en Arrays Persistentes}
+
+\begin{tabular}{@{}lcc@{}}
+\toprule
+        & W & S \\ \midrule
+filterS & $O(N)$  &  $O(N)$  \\
+reduceS & $O(N)$  &  $O(N)$ \\
+scanS   & $O(N)$  &  $O(N)$ \\
+showtS  & $O(N)$  &  $O(N)$ \\ \bottomrule
+\end{tabular}
+
+\subsubsection{El trabajo de filterS es $O(N)$}
+
+\begin{table}[h]
+\begin{lstlisting}
+filterA p x = A.flatten (mapA g x)
+    where g y = if p y then singletonA y else emptyA
+\end{lstlisting}
+\caption{Definicion de filterA}
+\end{table}
+\begin{itemize}
+\item \textbf{Lema:} \texttt{singletonA} y \texttt{emptyA} son $\Theta(1)$ en trabajo y profundidad.\\
+ \textit{Dem:} Ambas hacen una cantidad constante de operaciones independientemente de la entrada.
+ 
+\item \textbf{Lema:} \texttt{mapA f s} es $O( \sum\limits_{i=0}^{|s|-1} W[f\ s_i] )$ en trabajo y $O( \max\limits_{i=0}^{|s|-1} S[f\ s_i] )$ en profundidad.\\
+ \textit{Dem:} Se desprende como corolario de las cotas de \texttt{tabulate f n} con $g\ i = f\ s_i$. 
+ 
+\end{itemize}
+
+Del primer lema anterior, resulta que $W[g\ y]\in O(W[p\ y])$ y $S[g\ y]\in O(S[p\ y])$.
+
+Del segundo lema anterior, resulta \texttt{map\ g\ x} es $O(\sum\limits_{i=0}^{|x|-1} W[p\ x_i])$ en trabajo y $O(\max\limits_{i=0}^{|x|-1} S[p\ x_i])$ en profundidad.
+
+Tenemos entonces por la especificacion de \texttt{flatten} que \texttt{filter\ p\ x} es $O(|x| + \sum\limits_{i=0}^{|x|-1} W[p\ x_i])$ en trabajo ya que $|g(y)| \in O(1)$;y es $O(\log |x| + \max\limits_{i=0}^{|x|-1} S[p\ x_i])$ en profundidad.
 
 
 \end{document}
