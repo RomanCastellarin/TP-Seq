@@ -51,9 +51,8 @@ Juan Ignacio Suarez\\
 \end{center}
 \end{titlepage}
 \newpage
-\section{Introducción}
 
-\subsection*{Implementacion basada en Arrays Persistentes}
+\section{Implementacion basada en Arrays Persistentes}
 
 \begin{tabular}{@{}lcc@{}}
 \toprule
@@ -64,7 +63,7 @@ scanS   & $O(N)$  &  $O(N)$ \\
 showtS  & $O(N)$  &  $O(N)$ \\ \bottomrule
 \end{tabular}
 
-\subsubsection{filterA es $O(|x| + \sum\limits_{i=0}^{|x|-1} W[p\ x_i])$ en trabajo, y $O(\log |x| + \max\limits_{i=0}^{|x|-1} S[p\ x_i])$ prof.}
+\subsection{filterA es $O(|x| + \sum\limits_{i=0}^{|x|-1} W[p\ x_i])$ en trabajo, y $O(\log |x| + \max\limits_{i=0}^{|x|-1} S[p\ x_i])$ prof.}
 
 \begin{table}[h]
 \begin{lstlisting}
@@ -93,7 +92,7 @@ Es necesario calcular primero \texttt{map\ g\ x} para luego aplicar el \texttt{f
 Tenemos entonces por la especificacion dada de \texttt{flatten} que \texttt{filter\ p\ x} es $O(|x| + \sum\limits_{i=0}^{|x|-1} W[p\ x_i])$ en trabajo ya que $|g(y)| \in O(1)$, mientras que en profundidad es $O(\log |x| + \max\limits_{i=0}^{|x|-1} S[p\ x_i])$.
 
 
-\subsubsection{reduceA es $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$ en trabajo.}
+\subsection{reduceA es $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$ en trabajo.}
 
 Utilizaremos $\mathcal{O}_r(\oplus,e,s)$ para denotar el conjunto de aplicaciones de $\oplus$ al invocar \texttt{reduceA $\oplus$ e s}. Notemos que para reducir una secuencia de largo $n$ por aplicacion repetida de $\oplus$ (en cualquier orden) hacen falta $n-1$ aplicaciones, por lo que cardinalidad de este conjunto es $O(|s|)$.
 
@@ -116,6 +115,48 @@ $$O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$$ 
 
 $$ O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$$ en profundidad.
 
+
+\section{Implementacion basada en Listas}
+
+\begin{tabular}{@{}lcc@{}}
+\toprule
+        & W & S \\ 
+\midrule
+filterS f s & $O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i])$  & $O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i])$  \\
+showtS  & $O()$  &  $O()$ \\
+reduceS f e s & $O(|s| + \sum\limits_{i=0}^{|s|/2} W[f\ s_{2i}\ s_{2i+1}])$  &  $O()$ \\
+scanS   & $O()$  &  $O()$ \\ 
+\bottomrule
+\end{tabular}
+
+
+\subsection{filterL es $O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i])$ en trabajo, y $O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i])$ prof.}
+
+\begin{table}[h]
+\begin{lstlisting}
+filterL f []     = []
+filterL f (x:xs) = let (x',xs') = (if f x then [x] else []) ||| (filterL f xs) in x'++xs'
+\end{lstlisting}
+\caption{Definicion de filterL}
+\end{table}
+\begin{itemize}
+
+ 
+\end{itemize}
+
+Teniendo como segundo argumento el largo de la secuencia $s$, tenemos: \\
+\\
+    $W_{filter}(f, 0) = c_0$ \\
+    $W_{filter}(f, n) = 1 + ( W($if $f\ s_0$ then $[x]$ else $[]) + W_{filter}(f, n-1) ) + W(x'++xs') = $ \\
+\\
+    Como el costo de 'if' es constante (además de construir el resultado), vemos rápidamente que el costo de esta primer expresión es $W(f\ s_0) + k$.
+    Además, siendo $x'$ la asignación de este resultado, vemos que $x'++xs'$ también será de costo constante pues $x'$ será $[]$ ó $[x]$ y el operador $++$ depende del tamaño del primer argumento. Siguiendo:\\
+\\
+    $ = c_1 + W(f\ s_0) + W_{filter}(f, n-1) = ... = \sum\limits_{i=0}^{n-1} c_i + \sum\limits_{i=0}^{n-1} W[f\ s_i] $ \\
+\\
+    Donde se desprende $\sum\limits_{i=0}^{n-1} c_i$ de orden lineal más la sumatoria de costos de $f$ en los valores de la secuencia. Es decir: \\
+\\
+    $W_{filter} \in O(n + \sum\limits_{i=0}^{n-1} W[f\ s_i] ) = O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i])$\\
 
 
 
