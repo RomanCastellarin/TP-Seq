@@ -58,13 +58,13 @@ Juan Ignacio Suarez\\
 \begin{tabular}{@{}lcc@{}}
 \toprule
         & W & S \\ \midrule
-filterS & $O(N)$  &  $O(N)$  \\
-reduceS & $O(N)$  &  $O(N)$ \\
+filterS p x & $O(|x| + \sum\limits_{i=0}^{|x|-1} W[p\ x_i])$  &  $(\log |x| + \max\limits_{i=0}^{|x|-1} S[p\ x_i])$  \\
+reduceS f e s & $O(N)$  &  $O(N)$ \\
 scanS   & $O(N)$  &  $O(N)$ \\
 showtS  & $O(N)$  &  $O(N)$ \\ \bottomrule
 \end{tabular}
 
-\subsubsection{El trabajo de filterS es $O(N)$}
+\subsubsection{filterA es $O(|x| + \sum\limits_{i=0}^{|x|-1} W[p\ x_i])$ en trabajo, y $O(\log |x| + \max\limits_{i=0}^{|x|-1} S[p\ x_i])$ prof.}
 
 \begin{table}[h]
 \begin{lstlisting}
@@ -74,19 +74,49 @@ filterA p x = A.flatten (mapA g x)
 \caption{Definicion de filterA}
 \end{table}
 \begin{itemize}
-\item \textbf{Lema:} \texttt{singletonA} y \texttt{emptyA} son $\Theta(1)$ en trabajo y profundidad.\\
+\item \textbf{Lema:} \texttt{singletonA} y \texttt{emptyA} son $O(1)$ en trabajo y profundidad.
+
  \textit{Dem:} Ambas hacen una cantidad constante de operaciones independientemente de la entrada.
  
-\item \textbf{Lema:} \texttt{mapA f s} es $O( \sum\limits_{i=0}^{|s|-1} W[f\ s_i] )$ en trabajo y $O( \max\limits_{i=0}^{|s|-1} S[f\ s_i] )$ en profundidad.\\
- \textit{Dem:} Se desprende como corolario de las cotas de \texttt{tabulate f n} con $g\ i = f\ s_i$. 
+\item \textbf{Lema:} \texttt{mapA f s} es $O( \sum\limits_{i=0}^{|s|-1} W[f\ s_i] )$ en trabajo y $O( \max\limits_{i=0}^{|s|-1} S[f\ s_i] )$ en profundidad.
+
+ \textit{Dem:} Se desprende como corolario de las cotas de \texttt{tabulate g n} con $g\ i = f\ s_i$ y $n=|s|$. 
  
 \end{itemize}
 
-Del primer lema anterior, resulta que $W[g\ y]\in O(W[p\ y])$ y $S[g\ y]\in O(S[p\ y])$.
+Del primer lema, resulta que en la definicion de \texttt{map} presentada arriba,  $W[g\ y]\in O(W[p\ y])$ y $S[g\ y]\in O(S[p\ y])$.
 
 Del segundo lema anterior, resulta \texttt{map\ g\ x} es $O(\sum\limits_{i=0}^{|x|-1} W[p\ x_i])$ en trabajo y $O(\max\limits_{i=0}^{|x|-1} S[p\ x_i])$ en profundidad.
 
-Tenemos entonces por la especificacion de \texttt{flatten} que \texttt{filter\ p\ x} es $O(|x| + \sum\limits_{i=0}^{|x|-1} W[p\ x_i])$ en trabajo ya que $|g(y)| \in O(1)$;y es $O(\log |x| + \max\limits_{i=0}^{|x|-1} S[p\ x_i])$ en profundidad.
+Es necesario calcular primero \texttt{map\ g\ x} para luego aplicar el \texttt{flatten}, por lo que la profundidad (ademas del trabajo) se suman ya que no se realizan en paralelo.
+
+Tenemos entonces por la especificacion dada de \texttt{flatten} que \texttt{filter\ p\ x} es $O(|x| + \sum\limits_{i=0}^{|x|-1} W[p\ x_i])$ en trabajo ya que $|g(y)| \in O(1)$, mientras que en profundidad es $O(\log |x| + \max\limits_{i=0}^{|x|-1} S[p\ x_i])$.
+
+
+\subsubsection{reduceA es $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$ en trabajo.}
+
+Utilizaremos $\mathcal{O}_r(\oplus,e,s)$ para denotar el conjunto de aplicaciones de $\oplus$ al invocar \texttt{reduceA $\oplus$ e s}. Notemos que para reducir una secuencia de largo $n$ por aplicacion repetida de $\oplus$ (en cualquier orden) hacen falta $n-1$ aplicaciones, por lo que cardinalidad de este conjunto es $O(|s|)$.
+
+Para el analisis general de costo, supondremos primero que $W[x \oplus y]$ es $O(1)$, y luego deduciremos el caso general.
+
+\begin{itemize}
+\item \textbf{Lema:} Para $W_\oplus,S_\oplus \in O(1)$, \texttt{contractA $\oplus$ s} es $O(|s|)$ en trabajo y $O(1)$ en profundidad.
+
+ \textit{Dem:} Corolario de las cotas de \texttt{tabulate g n} con $g\ i = s_{2i}\oplus s_{2i+1}$ y $n\in O(|s|)$.
+\end{itemize}
+
+Veamos que como \texttt{contract} reduce la longitud de la secuencia en un factor de $1/2$, \texttt{reduceByContraction} solo recursa $O(\log |s|)$ veces, y por lo tanto (bajo la hip. de $S_\oplus \in O(1)$) resulta $O(\log |s|)$ en profundidad.
+
+Para el trabajo, veamos que obtenemos una serie geometrica, por lo que (bajo la hip. de $W_\oplus \in O(|s|)$) resulta $O(|s|)$.
+
+Para una especificacion de costos general, notemos que solo debemos agregarle al trabajo obtenido, el trabajo de cada operacion ($x\oplus y$) hecho, y la profundidad no puede empeorar mas que en un factor $\max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y]$.
+
+Por lo que finalmente obtenemos:
+$$O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$$ en trabajo,y
+
+$$ O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$$ en profundidad.
+
+
 
 
 \end{document}
