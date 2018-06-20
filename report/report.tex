@@ -152,7 +152,7 @@ Teniendo como segundo argumento el largo de la secuencia $s$: \\
     $W_{filter}(f, n) = 1 + ( 1 + W($if $f\ s_0$ then $[x]$ else $[]) + W_{filter}(f, n-1) ) + W(x'++xs') = $ \\
 \\
     Como el costo de 'if' es constante (además de construir el resultado), vemos rápidamente que el costo de esta primer expresión es $W(f\ s_0) + k$.
-    Además, siendo $x'$ la asignación de este resultado, vemos que $x'++xs'$ también será de costo constante pues $x'$ será $[]$ ó $[x]$ y la función $++$ depende del tamaño del primer argumento. Siguiendo:\\
+    Además, siendo $x'$ la asignación de este resultado, vemos que $x'++xs'$ también será de costo constante pues $x'$ será $[]$ o $[x]$ y la función $++$ depende del tamaño del primer argumento. Siguiendo:\\
 \\
     $ = c_1 + W(f\ s_0) + W_{filter}(f, n-1) = ... = \sum\limits_{i=0}^{n-1} c_i + \sum\limits_{i=0}^{n-1} W[f\ s_i] $ \\
 \\
@@ -178,11 +178,11 @@ Similar a como analizamos el trabajo, tenemos: \\
     c_1 + max\{ S_f, c_2 + max\{S_f, S_{filter}(f, n-2) \} \} \leq 
     c_1 + max\{ S_f, c_2 + max\{S_f, ... max\{ S_f, c_0 \} ... \} \} = $\\
 \\
-    Considerando $c_0 \leq S_f$ esto resulta en:\\
+    Considerando el peor caso $c_0 < S_f$, esto resulta en:\\
 \\
     $ = \sum\limits_{i=0}^{n-1} c_i + S_f $\\
 \\
-    Nuevamente se desprende de la primer sumatoria un orden lineal sumado a $S_f$, el cual por definición era el máximo $S(f\ s_i)$. Por lo tanto: \\
+    Nuevamente se desprende de la primer sumatoria un orden lineal, sumado a $S_f$, el cual por definición era el máximo $S(f\ s_i)$ para algún $i$. Por lo tanto: \\
 \\
     $S_{filter} \in O(n + \max\limits_{i} S[f\ s_i] ) = O(|s| + \max\limits_{i} S[f\ s_i] )$\\
     
