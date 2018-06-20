@@ -1,0 +1,2 @@
+filterA p x = A.flatten (mapA g x)
+    where g y = if p y then singletonA y else emptyA

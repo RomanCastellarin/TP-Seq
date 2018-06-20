@@ -59,9 +59,9 @@ Juan Ignacio Suarez\\
 \toprule
         & W & S \\ \midrule
 filterS p x & $O(|x| + \sum\limits_{i=0}^{|x|-1} W[p\ x_i])$  &  $(\log |x| + \max\limits_{i=0}^{|x|-1} S[p\ x_i])$  \\
-reduceS f e s & $O(N)$  &  $O(N)$ \\
+reduceS f e s & $\displaystyle O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$  &  $O(N)$ \\
 scanS   & $O(N)$  &  $O(N)$ \\
-showtS  & $O(N)$  &  $O(N)$ \\ \bottomrule
+showtS  & $O(1)$  &  $O(1)$ \\ \bottomrule
 \end{tabular}
 
 \subsubsection{filterA es $O(|x| + \sum\limits_{i=0}^{|x|-1} W[p\ x_i])$ en trabajo, y $O(\log |x| + \max\limits_{i=0}^{|x|-1} S[p\ x_i])$ prof.}
@@ -116,7 +116,50 @@ $$O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$$ 
 
 $$ O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$$ en profundidad.
 
+\subsubsection{scanA bla bla.}
 
+\begin{table}[h]
+\begin{lstlisting}
+scanA f e s = (scan_seq, scan_last)
+    where (scan_seq, scan_last) = (scanA' f e s) ||| (reduceA f e s)
+          scanA' f e s = case A.length s of
+            0 -> emptyA
+            1 -> singletonA e
+            n -> tabulateA g n
+            where s' = scanA' f e (contractA f s)
+                  g i | even i    = s' ! (i//2)
+                      | otherwise = f (s' ! (i//2)) (s ! (i-1))
+\end{lstlisting}
+\caption{Definicion de scanA}
+\end{table}
 
+Analogamente a como hicimos para el analisis de reduceA, supondremos primero que $\oplus$ es $O(1)$ en trabajo y profundidad, y consideraremos el conjunto $\mathcal{O}_s(\oplus,e,s)$ de aplicaciones de $\oplus$ al invocar \texttt{scanS $\oplus$ e s}.
+
+\begin{itemize}
+\item \textbf{Lema:} Para $W_\oplus,S_\oplus \in O(1)$, \texttt{scanA' $\oplus$ e s} es $O(|s|)$ en trabajo y $O(\log |s|)$ en profundidad.
+
+ \textit{Dem:} De manera similar al analisis de reduceA, vemos que la recurrencia para el trabajo es $W(n) = W(n/2) + O(n)$, donde el $O(n)$  viene del trabajo de \texttt{tabulateA} y \texttt{contractA}, y el $W(n/2)$ del trabajo de la llamada recursiva (contractA reduce en un factor de 1/2 la secuencia). De donde el trabajo resulta $O(|s|)$. De la misma forma, la recurrencia para la profundidad es $S(n) = S(n/2) + O(1)$ donde el $O(1)$ viene de la profundidad de \texttt{contractA} y \texttt{tabulateA}, ambas $O(1)$. Resulta asi una profundidad de $O(\log |s|)$
+\end{itemize}
+
+\subsubsection{showtA es $O(1)$ en trabajo y profundidad.}
+
+\begin{table}[h]
+\begin{lstlisting}
+showtA x | n == 0    = EMPTY 
+         | n == 1    = ELT (x ! 0)
+         | otherwise = NODE (takeA x m) (dropA x m)
+    where n = A.length x
+          m = n//2
+\end{lstlisting}
+\caption{Definicion de showtA}
+\end{table}
+
+\begin{itemize}
+\item \textbf{Lema:}  \texttt{takeA, dropA} son $O(1)$ en trabajo y profundidad.
+
+ \textit{Dem:} Corolario de las cotas de \texttt{subArray}.
+\end{itemize}
+
+\texttt{showtA} realiza una cantidad constante de operaciones ya que no recursa e invoca funciones que realizan trabajo y profundidad constante.
 
 \end{document}
