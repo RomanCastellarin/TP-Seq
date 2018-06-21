@@ -219,8 +219,8 @@ showtA x | n == 0    = EMPTY
 \midrule
 filterS & $O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i])$  & $O(|s| + \max\limits_{i} S[f\ s_i] )$  \\
 showtS  & $O(|s|)$  &  $O(|s|)$ \\
-reduceS & $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$  &  $O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ \\
-scanS   & $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$  &  $O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ \\ 
+reduceS & $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$  &  $O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ \\
+scanS   & $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$  &  $O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ \\ 
 \bottomrule
 \end{tabular}
 
@@ -333,7 +333,7 @@ showtL s   = let mid = div (lengthL s) 2
 \end{itemize}
 
 
-\subsection{reduceL es $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$ en trabajo, y $O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ prof.}
+\subsection{reduceL es $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$ en trabajo, y $O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ prof.}
 
 \begin{table}[h]
 \begin{lstlisting}
@@ -396,9 +396,9 @@ contractL f (x:y:xs) = let (x',xs') = f x y ||| contractL f xs
     $$ S_{reduceL}(\oplus, e, 1) = W(\oplus\ e\ s_0) $$
     $$ S_{reduceL}(\oplus, e, n) = 1 + max\{ S_{contractL}(\oplus, n), S_{reduceL}(\oplus, e, n/2) \} $$
     
-    Al expandir la expresión obtenemos un $max$ con $\log n = \log |s|$ parámetros, de donde nos quedamos con el máximo $S(s_i \oplus s_j)$ para cada caso. De nuevo, podemos acotarlo eligiendo siempre la máxima aplicación del conjunto $\mathcal{O}_r(\oplus,e,s)$ y nos queda:
+    Al expandir la expresión obtenemos un $max$ con $\log n = \log |s|$ parámetros, de donde nos quedamos con el máximo $S(s_i \oplus s_j)$ para cada caso. Sin embargo en este caso tenemos una profundidad de al menos lineal al invocar a contractL. De nuevo, podemos acotarlo eligiendo siempre la máxima aplicación del conjunto $\mathcal{O}_r(\oplus,e,s)$ y nos queda:
 
-    $$ S_{reduceL} \in O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y]) $$
+    $$ S_{reduceL} \in O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y]) $$
     
 \end{itemize}
 
@@ -476,9 +476,9 @@ scanL f e s   = let (l, res) = scanL f e (contractL f s)
     
     $$ S_{contractL}, S_{expandL} \in O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y]) $$
     
-    Y también tenemos $\log s$ recursiones. Por lo tanto:
+    Y también tenemos $\log s$ recursiones, sin embargo ocurre lo mismo, pues seguimos teniendo $S_{expandL}$ el cual produce que la cota sea cuanto menos lineal. Por lo tanto:
     
-    $$ S_{scanL} \in O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y]) $$
+    $$ S_{scanL} \in O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y]) $$
     
 \end{itemize}
 
