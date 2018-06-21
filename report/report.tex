@@ -217,10 +217,10 @@ showtA x | n == 0    = EMPTY
 \toprule
         & W & S \\ 
 \midrule
-filterS f s & $O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i])$  & $O(|s| + \max\limits_{i} S[f\ s_i] )$  \\
-showtS  & $O()$  &  $O()$ \\
-reduceS f e s & $O(|s| + \sum\limits_{i=0}^{|s|/2} W[f\ s_{2i}\ s_{2i+1}])$  &  $O()$ \\
-scanS   & $O()$  &  $O()$ \\ 
+filterS & $O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i])$  & $O(|s| + \max\limits_{i} S[f\ s_i] )$  \\
+showtS  & $O(|s|)$  &  $O(|s|)$ \\
+reduceS & $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$  &  $O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ \\
+scanS   & $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$  &  $O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ \\ 
 \bottomrule
 \end{tabular}
 
@@ -241,82 +241,246 @@ filterL f (x:xs) =
 
 \item \textbf{Trabajo de filterL:}
 
-Teniendo como segundo argumento el largo de la secuencia $s$: \\
-\\
-    $W_{filter}(f, 0) = c_0$ \\
-    $W_{filter}(f, n) = 1 + ( 1 + W($if $f\ s_0$ then $[x]$ else $[]) + W_{filter}(f, n-1) ) + W(x'++xs') = $ \\
-\\
+    Teniendo como segundo argumento el largo de la secuencia $s$:
+
+    $$ W_{filterL}(f, 0) = c_0 $$
+    $$ W_{filterL}(f, n) = 1 + ( 1 + W(if\ f\ s_0\ then\ [x]\ else\ []) + W_{filterL}(f, n-1) ) + W(x'++xs') = $$
+
     Como el costo de 'if' es constante (además de construir el resultado), vemos rápidamente que el costo de esta primer expresión es $W(f\ s_0) + k$.
-    Además, siendo $x'$ la asignación de este resultado, vemos que $x'++xs'$ también será de costo constante pues $x'$ será $[]$ o $[x]$ y la función $++$ depende del tamaño del primer argumento. Siguiendo:\\
-\\
-    $ = c_1 + W(f\ s_0) + W_{filter}(f, n-1) = ... = \sum\limits_{i=0}^{n-1} c_i + \sum\limits_{i=0}^{n-1} W[f\ s_i] $ \\
-\\
-    Donde se desprende $\sum\limits_{i=0}^{n-1} c_i$ de orden lineal más la sumatoria de costos de $f$ en los valores de la secuencia. Es decir: \\
-\\
-    $W_{filter} \in O(n + \sum\limits_{i=0}^{n-1} W[f\ s_i] ) = O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i])$\\
+    Además, siendo $x'$ la asignación de este resultado, vemos que $x'++xs'$ también será de costo constante pues $x'$ será $[]$ o $[x]$ y la función $++$ depende del tamaño del primer argumento. Siguiendo:
+
+    $$ = c_1 + W(f\ s_0) + W_{filterL}(f, n-1) = ... = \sum\limits_{i=0}^{n-1} c_i + \sum\limits_{i=0}^{n-1} W[f\ s_i] $$
+
+    Donde se desprende $\sum\limits_{i=0}^{n-1} c_i$ de orden lineal más la sumatoria de costos de $f$ en los valores de la secuencia. Es decir:
+
+    $$ W_{filterL} \in O(n + \sum\limits_{i=0}^{n-1} W[f\ s_i] ) = O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i]) $$
 
 \item \textbf{Profundidad de filterL:}
 
-Similar a como analizamos el trabajo, tenemos: \\
-\\
-    $S_{filter}(f, 0) = c_0$ \\
-    $S_{filter}(f, n) = 1 + ( 1 + max\{ S($if $f\ s_0$ then $[x]$ else $[]), S_{filter}(f, n-1)\} ) + S(x'++xs') = $ \\
-\\
-    Así como sucedía con el costo también sucede con la profundidad, en el caso del 'if' también tenemos $S(f\ s_0) + k$ y la profundidad de $++$ seguirá siendo constante. Siguiendo:\\
-\\
-    $ = c_1 + max\{ S(f\ s_0), S_{filter}(f, n-1) \} = c_1 + max\{ S(f\ s_0), c_2 + max\{S(f\ s_1), S_{filter}(f, n-2) \} \} \ (1) $ \\
-\\
-    Sea $S_f$ tal que $S_f = \max\limits_{0<=i<n} S(f\ s_i)$. \\
-    Volviendo a $(1)$, reemplazando con $S_f$ nos queda:\\
-\\
-    $(1) \leq 
-    c_1 + max\{ S_f, c_2 + max\{S_f, S_{filter}(f, n-2) \} \} \leq 
-    c_1 + max\{ S_f, c_2 + max\{S_f, ... max\{ S_f, c_0 \} ... \} \} = $\\
-\\
-    Considerando el peor caso $c_0 < S_f$, esto resulta en:\\
-\\
-    $ = \sum\limits_{i=0}^{n-1} c_i + S_f $\\
-\\
-    Nuevamente se desprende de la primer sumatoria un orden lineal, sumado a $S_f$, el cual por definición era el máximo $S(f\ s_i)$ para algún $i$. Por lo tanto: \\
-\\
-    $S_{filter} \in O(n + \max\limits_{i} S[f\ s_i] ) = O(|s| + \max\limits_{i} S[f\ s_i] )$\\
+    Similar a como analizamos el trabajo, tenemos:
+
+    $$ S_{filterL}(f, 0) = c_0 $$
+    $$ S_{filterL}(f, n) = 1 + ( 1 + max\{ S(if\ f\ s_0\ then\ [x]\ else\ []), S_{filterL}(f, n-1)\} ) + S(x'++xs') = $$
+
+    Así como sucedía con el costo también sucede con la profundidad, en el caso del 'if' también tenemos $S(f\ s_0) + k$ y la profundidad de $++$ seguirá siendo constante. Siguiendo:
+
+    $$ = c_1 + max\{ S(f\ s_0), S_{filterL}(f, n-1) \} = $$
+    $$ = c_1 + max\{ S(f\ s_0), c_2 + max\{S(f\ s_1), S_{filterL}(f, n-2) \} \} \ (1) $$
+
+    Sea $S_f$ tal que $S_f = \max\limits_{0<=i<n} S(f\ s_i)$. 
+    Volviendo a $(1)$, reemplazando con $S_f$ nos queda:
+
+    $$ (1) \leq $$
+    $$ c_1 + max\{ S_f, c_2 + max\{S_f, S_{filterL}(f, n-2) \} \} \leq $$
+    $$ c_1 + max\{ S_f, c_2 + max\{S_f, ... max\{ S_f, c_0 \} ... \} \} = $$
+
+    Considerando el peor caso $c_0 < S_f$, esto resulta en:
+
+    $$ = \sum\limits_{i=0}^{n-1} c_i + S_f $$
+
+    Nuevamente se desprende de la primer sumatoria un orden lineal, sumado a $S_f$, el cual por definición era el máximo $S(f\ s_i)$ para algún $i$. Por lo tanto:
+
+    $$ S_{filterL} \in O(n + \max\limits_{i} S[f\ s_i] ) = O(|s| + \max\limits_{i} S[f\ s_i] ) $$
     
 \end{itemize}
 
 
-\subsection{showtL es $O()$ en trabajo, y $O()$ prof.}
+\subsection{showtL es $O(|s|)$ en trabajo, y $O(|s|)$ prof.}
+
+\begin{table}[h]
+\begin{lstlisting}
+showtL []  = EMPTY
+showtL [x] = ELT x
+showtL s   = let mid = div (lengthL s) 2
+                 (l,r) = (takeL s mid) ||| (dropL s mid)
+                in NODE l r
+\end{lstlisting}
+\caption{Definicion de showtL}
+\end{table}
 
 \begin{itemize}
 
-\item \textbf{Trabajo de showtL:}
+\item \textbf{Lema:} \texttt{takeL y dropL} son $O(|s|)$ en trabajo y $O(|s|)$ en profundidad.
 
+ \textit{Dem:} Se desprende de la definción $takeL\ s\ n = take\ n\ s$, $dropL\ s\ n = drop\ n\ s$, y la documentación oficial de las mismas. 
+
+\item \textbf{Trabajo y profundidad de showtL:}
+
+    Notar que EMPTY y ELT son constructores de TreeView, por lo que tienen trabajo y profundidad constante. Resulta instantáneo el análisis del trabajo: 
+
+    $$ W_{showtL}(0) = c_0 $$
+    $$ W_{showtL}(1) = c_1 $$
+    $$ W_{showtL}(n) = 1 + W_{takeL}(n/2) + W_{dropL}(n/2)  $$
+    $$ W_{showtL}(n) = c_2 + W_{takeL}(n/2) + W_{dropL}(n/2) $$
+
+    Donde teníamos $W_{takeL} \in O(|s|)$ y $W_{dropL} \in O(|s|)$, por lo tanto:\\
+
+    $$ W_{showtL} \in O(|s|) $$
 
 \item \textbf{Profundidad de showtL:}
     
+    De forma análoga al análisis anterior:
+
+    $$ S_{showtL}(0) = c_0 $$
+    $$ S_{showtL}(1) = c_1 $$
+    $$ S_{showtL}(n) = 1 + max\{ S_{takeL}(n/2), W_{dropL}(n/2) \} $$
+    $$ S_{showtL}(n) = c_2 + max\{ S_{takeL}(n/2), W_{dropL}(n/2) \} $$
+
+    Donde tenemos $S_{takeL} \in O(|s|)$ y $S_{dropL} \in O(|s|) \Rightarrow max\{ S_{takeL}(n/2), W_{dropL}(n/2) \} \in O(|s|)$ Luego:
+
+    $$ S_{showtL} \in O(|s|) $$
+    
 \end{itemize}
 
 
-\subsection{reduceL es $O()$ en trabajo, y $O()$ prof.}
+\subsection{reduceL es $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$ en trabajo, y $O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ prof.}
+
+\begin{table}[h]
+\begin{lstlisting}
+reduceL f e []  = e
+reduceL f e [x] = f e x
+reduceL f e s   = reduceL f e (contractL f s)
+
+contractL f []       = []
+contractL f [x]      = [x]
+contractL f (x:y:xs) = let (x',xs') = f x y ||| contractL f xs 
+                        in x':xs'
+\end{lstlisting}
+\caption{Definicion de reduceL y contractL}
+\end{table}
 
 \begin{itemize}
+
+\item \textbf{Lema:} \texttt{contractL} es $O(|s| + \sum\limits_{i=0}^{|s|/2} W[s_{2i} \oplus s_{2i+1}])$ en trabajo y $O(|s| + \max\limits_{0 \leq i \leq |s|/2} S[s_{2i} \oplus s_{2i+1}])$ en prof.
+
+ \textit{Dem:} 
+    De la definición de contractL:
+    
+    $$ W_{contractL}(\oplus, 0) = c_0 $$
+    $$ W_{contractL}(\oplus, 1) = c_1 $$
+    $$ W_{contractL}(\oplus, n) = 1 + W(s_0 \oplus s_1) + W_{contractL}(\oplus, n-2) \leq \sum\limits_{i=0}^{n/2} W[s_{2i} \oplus s_{2i+1}] + \sum\limits_{i=0}^{n/2} c_i $$
+    
+    Notar que la longitud de la lista es $n/2 = |s|/2$ pues por cada elemento nuevo quitamos 2 elementos en $n-2$ de la secuencia original en la siguiente recursión. De esto obtenemos un término lineal sumado a el trabajo de aplicar la función en cada par de la secuencia, por lo tanto:
+    
+    $$ W_{contractL} \in O(n + \sum\limits_{i=0}^{n/2} W[s_{2i} \oplus s_{2i+1}]) = O(|s| + \sum\limits_{i=0}^{|s|/2} W[s_{2i} \oplus s_{2i+1}]) $$
+    
+    Similarmente con la profundidad:
+    
+    $$ S_{contractL}(\oplus, 0) = c_0 $$
+    $$ S_{contractL}(\oplus, 1) = c_1 $$
+    $$ S_{contractL}(\oplus, n) = 1 + max\{ S(s_0 \oplus s_1), S_{contractL}(\oplus, n-2) \} $$
+    
+    Donde en cada recurrencia nos quedamos con el máximo $S(s_i \oplus s_j)$ de esa instancia. Podemos acotar este resultado simplemente considerando el máximo $S(s_i \oplus s_j)$ de cualquier aplicación del conjunto $\mathcal{O}_r(\oplus,e,s)$ como cota. Resulta entonces:
+    
+    $$ S_{contractL} \in O(|s| + \max\limits_{0 \leq i \leq |s|/2} S[s_{2i} \oplus s_{2i+1}]) $$
 
 \item \textbf{Trabajo de reduceL:}
 
+    Comenzando con la definición de reduceL:
+
+    $$ W_{reduceL}(\oplus, e, 0) = c_0 $$
+    $$ W_{reduceL}(\oplus, e, 1) = W(\oplus\ e\ s_0) $$
+    $$ W_{reduceL}(\oplus, e, n) = 1 + W_{contractL}(\oplus, n) + W_{reduceL}(\oplus, e, n/2) = $$
+    $$ 1 + W_{contractL}(\oplus\ n) = 1 + ( 1 + W_{contractL}(\oplus, n/2) + W_{reduceL}(\oplus, e, n/4) ) = $$
+    $$ ... = c + W_{reduceL}(\oplus, n/2) + ... + W(\oplus\ e\ s_0)\ o\ c_0\ (dependiendo\ de\ la\ paridad) $$ 
+    
+    Como vimos en la implementación con arreglos tenemos $n-1$ aplicaciones en total, y como de la ecuación planteada surge la serie geométrica $n/2 + n/4 + ... + 1 = n-1$ de aplicaciones en elementos distintos (utilizamos los nuevos generados anteriormente) tenemos la suma del trabajo en todas las aplicaciones, además del costo lineal de $contractL$ (y la constante). Es decir:
+    
+    $$ W_{reduceL} \in O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y]) $$
 
 \item \textbf{Profundidad de reduceL:}
+
+    Similarmente al caso anterior:
+    
+    $$ S_{reduceL}(\oplus, e, 0) = c_0 $$
+    $$ S_{reduceL}(\oplus, e, 1) = W(\oplus\ e\ s_0) $$
+    $$ S_{reduceL}(\oplus, e, n) = 1 + max\{ S_{contractL}(\oplus, n), S_{reduceL}(\oplus, e, n/2) \} $$
+    
+    Al expandir la expresión obtenemos un $max$ con $\log n = \log |s|$ parámetros, de donde nos quedamos con el máximo $S(s_i \oplus s_j)$ para cada caso. De nuevo, podemos acotarlo eligiendo siempre la máxima aplicación del conjunto $\mathcal{O}_r(\oplus,e,s)$ y nos queda:
+
+    $$ S_{reduceL} \in O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y]) $$
     
 \end{itemize}
 
 
-\subsection{scanL es $O()$ en trabajo, y $O()$ prof.}
+\subsection{scanL es $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$ en trabajo, y $O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ prof.}
+
+\begin{table}[h]
+\begin{lstlisting}
+expandL f _ []             = []
+expandL f (x:xs) [y]       = [x]
+expandL f (x:xs) (y:y':ys) = x:(f x y):expandL f xs ys
+
+scanL f e []  = ([], e)
+scanL f e [x] = ([e], f e x)
+scanL f e s   = let (l, res) = scanL f e (contractL f s) 
+                in (expandL f l s, res)
+\end{lstlisting}
+
+\caption{Definicion de expandL y scanL}
+\end{table}
 
 \begin{itemize}
 
-\item \textbf{Trabajo de scanL:}
+\item \textbf{Lema:} \texttt{expandL} es $(|s| + \sum\limits_{i=0}^{|s|/2} W[cs_{i} \oplus s_{2i}])$ en trabajo y $O(|s| + \max\limits_{0 \leq i \leq |s|/2} S[cs_{i} \oplus s_{2i}])$ en prof.
 
+ \textit{Dem:} De la definición de expandL, donde cs es la secuencia parcial y s es la secuencia original, cn y n sus respectivas longitudes :
+    
+    $$ W_{expandL}(\oplus, 0, n) = c_0 $$
+    $$ W_{expandL}(\oplus, n, 1) = c_1 $$
+    $$ W_{expandL}(\oplus, cn, n) = 1 + W(cs_0 \oplus s_0) + W_{expandL}(\oplus, cn-1, n-2) = ... $$
+    $$ ... = c + W(cs_0 \oplus s_0) + W(cs_1 \oplus n_2) + .. + W(cs_{n/2} \oplus s_n) \leq $$
+
+    Entonces:
+    
+    $$ W_{expandL} \in O(n + \sum\limits_{i=0}^{n/2} W[cs_{i} \oplus s_{2i}]) = O(|s| + \sum\limits_{i=0}^{|s|/2} W[cs_{i} \oplus s_{2i}]) $$
+    
+    Análogamente para la profundidad:
+    
+    $$ S_{expandL}(\oplus, 0, n) = c_0 $$
+    $$ S_{expandL}(\oplus, n, 1) = c_1 $$
+    $$ S_{expandL}(\oplus, cn, n) = 1 + max\{ S(cs_0 \oplus s_0), S_{expandL}(\oplus, cn-1, n-2)\} = ... $$
+    
+    De donde resulta:
+    
+    $$ S_{expandL} \in O(|s| + \max\limits_{0 \leq i \leq |s|/2} S[cs_{i} \oplus s_{2i}]) $$
+
+\item \textbf{Trabajo de scanL:}
+    De la definición de scanL:
+    
+    $$ W_{scanL}(\oplus, e, 0) = c_0 $$
+    $$ W_{scanL}(\oplus, e, 1) = c_1 + W[e \oplus x]  $$
+    $$ W_{scanL}(\oplus, e, n) = c_2 + W_{contractL}(n) + W_{scanL}(\oplus, e, n/2) + W_{expandL}(n/2, n) $$
+    
+    Notar que contractL y expandL de hecho tienen la misma estructura y sólo difieren en aplicaciones distintas, y ambos pueden ser acotados superiormente de una forma similar como en reduce: eligiendo la sumatoria de aplicaciones en $\mathcal{O}_r(\oplus,e,s)$, pues cada aplicación de $\oplus$ en cada ejecucion tanto de contractL como expandL es miembro de este conjunto, es decir
+    
+    $$ W_{contractL}, W_{expandL} \in O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y]) $$
+    
+    Esto nos resulta muy útil porque ahora alteramos el orden de los términos en la ecuación anterior y vemos:
+    
+    $$ W_{scanL}(\oplus, e, n) = c_2 + W_{scanL}(\oplus, e, n/2) + ( W_{contractL}(n) + W_{expandL}(n/2, n) ) $$
+    
+    Donde observamos la misma estructura que en reduce, con contractL y expandL igualmente acotados. Con el mismo razonamiento anterior de la serie geométrica nos queda:
+    
+    $$ W_{scanL} \in O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y]) $$
+    
 
 \item \textbf{Profundidad de scanL:}
+    De la definición de scanL:
     
-\end{itemize}    
+    $$ S_{scanL}(\oplus, e, 0) = c_0 $$
+    $$ S_{scanL}(\oplus, e, 1) = c_1 + S[e \oplus x]  $$
+    $$ S_{scanL}(\oplus, e, n) = 1 + ( 1 + max\{ S_{scanL}(\oplus, e, n/2), S_{contractL}(\oplus, n/2) \} ) + S_{expandL}(n/2, n) $$
+    
+    Con el mismo argumento anterior podemos ver que también acotamos a contractL y expandL:
+    
+    $$ S_{contractL}, S_{expandL} \in O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y]) $$
+    
+    Y también tenemos $\log s$ recursiones. Por lo tanto:
+    
+    $$ S_{scanL} \in O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y]) $$
+    
+\end{itemize}
+
 
 \end{document}
