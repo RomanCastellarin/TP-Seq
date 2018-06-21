@@ -31,7 +31,6 @@ lengthL = length
 
 nthL s i = s !! i
 
--- tabulateL f n = mapL f [0..n-1]
 tabulateL f n   | n <= 0 = []
                 | otherwise = tabulateL' f 0 n
                     where tabulateL' f i n  | i == n    = []
@@ -48,15 +47,12 @@ appendL = (++)
 takeL s n = take n s
 dropL s n = drop n s
 
--- Parallel in this case doesn't actually optimize the overall complexity
 showtL []  = EMPTY
 showtL [x] = ELT x
 showtL s   = let mid = div (lengthL s) 2
                  (l,r) = (takeL s mid) ||| (dropL s mid)
                 in NODE l r
-            -- Non-parallel version:
-            -- let mid = div (lengthL s) 2 in NODE (takeL s mid) (dropL s mid)
- 
+
 showlL []     = NIL
 showlL (x:xs) = CONS x xs
  
@@ -80,5 +76,4 @@ expandL f (x:xs) (y:y':ys) = x:(f x y):expandL f xs ys
 scanL f e []  = ([], e)
 scanL f e [x] = ([e], f e x)
 scanL f e s   = let (l, res) = scanL f e (contractL f s) in (expandL f l s, res)
-
 

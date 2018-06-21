@@ -52,7 +52,7 @@ Juan Ignacio Suarez\\
 \end{titlepage}
 \newpage
 
-\section{Implementacion basada en\\Arrays Persistentes}
+\section{Implementación basada en\\Arrays Persistentes}
 
 \begin{tabular}{@{}lcc@{}}
 \toprule
@@ -69,7 +69,7 @@ showtS s  & $O(1)$  &  $O(1)$ \\ \bottomrule
 filterA p x = A.flatten (mapA g x)
     where g y = if p y then singletonA y else emptyA
 \end{lstlisting}
-\caption{Definicion de filterA}
+\caption{definición de filterA}
 \end{table}
 \begin{table}[h]
 \begin{lstlisting}
@@ -78,7 +78,7 @@ singletonA x = A.fromList [x]
 mapA f x = A.tabulate g (A.length x)
     where g n = f (x ! n)
 \end{lstlisting}
-\caption{Definicion de emptyA, singletonA y mapA}
+\caption{definición de emptyA, singletonA y mapA}
 \end{table}
 \begin{itemize}
 \item \textbf{Lema:} \texttt{singletonA} y \texttt{emptyA} son $O(1)$ en trabajo y profundidad.
@@ -91,7 +91,7 @@ mapA f x = A.tabulate g (A.length x)
  
 \end{itemize}
 
-Concentremonos en la definicion de \texttt{filterA} presentada arriba:
+Concentremonos en la definición de \texttt{filterA} presentada arriba:
 \begin{itemize}
 \item Del primer lema, resulta que $W[g\ y]\in O(W[p\ y])$ y $S[g\ y]\in O(S[p\ y])$.
 \item Del segundo lema, resulta que \texttt{map\ g\ x} es $O(\sum\limits_{i=0}^{|x|-1} W[p\ x_i])$ en trabajo y $O(\max\limits_{i=0}^{|x|-1} S[p\ x_i])$ en profundidad.
@@ -116,7 +116,7 @@ reduceA f e s = case A.length s of
             1 -> s ! 0
             _ -> reduceByContraction f (contractA f s)
 \end{lstlisting}
-\caption{Definicion de reduceA}
+\caption{definición de reduceA}
 \end{table}
 
 \begin{table}[h!]
@@ -128,7 +128,7 @@ contractA f s | n == 1    = s
           g i = f (s ! (2*i)) (s ! (2*i + 1))
           g' i = if i == (n//2) then s ! (2*i) else g i
 \end{lstlisting}
-\caption{Definicion de contractA}
+\caption{definición de contractA}
 \end{table}
 
 \begin{itemize}
@@ -167,7 +167,7 @@ scanA f e s = (scan_seq, scan_last)
                   g i | even i    = s' ! (i//2)
                       | otherwise = f (s' ! (i//2)) (s ! (i-1))
 \end{lstlisting}
-\caption{Definicion de scanA}
+\caption{definición de scanA}
 \end{table}
 
 Analogamente a como hicimos para el analisis de reduceA, supondremos primero que $\oplus$ es $O(1)$ en trabajo y profundidad, y consideraremos el conjunto $\mathcal{O}_s(\oplus,e,s)$ de aplicaciones de $\oplus$ al invocar \texttt{scanS $\oplus$ e s}.
@@ -199,7 +199,7 @@ showtA x | n == 0    = EMPTY
     where n = A.length x
           m = n//2
 \end{lstlisting}
-\caption{Definicion de showtA}
+\caption{definición de showtA}
 \end{table}
 
 \begin{itemize}
@@ -211,7 +211,7 @@ showtA x | n == 0    = EMPTY
 
 \texttt{showtA} realiza una cantidad constante de operaciones ya que no recursa e invoca funciones que realizan trabajo y profundidad constante.
 
-\section{Implementacion basada en Listas}
+\section{Implementación basada en Listas}
 
 \begin{tabular}{@{}lcc@{}}
 \toprule
@@ -220,12 +220,12 @@ showtA x | n == 0    = EMPTY
 filterS & $O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i])$  & $O(|s| + \max\limits_{i} S[f\ s_i] )$  \\
 showtS  & $O(|s|)$  &  $O(|s|)$ \\
 reduceS & $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$  &  $O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ \\
-scanS   & $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$  &  $O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ \\ 
+scanS   & $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} W[x\oplus y])$  &  $O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} S[x\oplus y])$ \\ 
 \bottomrule
 \end{tabular}
 
 
-\subsection{filterL es $O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i])$ en trabajo, y $O(|s| + \max\limits_{i} S[f\ s_i] )$ prof.}
+\subsection{filterL es $O(|s| + \sum\limits_{i=0}^{|s|-1} W[f\ s_i])$ en trabajo, \\y $O(|s| + \max\limits_{i} S[f\ s_i] )$ prof.}
 
 \begin{table}[h]
 \begin{lstlisting}
@@ -235,7 +235,7 @@ filterL f (x:xs) =
         (if f x then [x] else []) ||| (filterL f xs) 
     in x'++xs'
 \end{lstlisting}
-\caption{Definicion de filterL}
+\caption{definición de filterL}
 \end{table}
 \begin{itemize}
 
@@ -295,7 +295,7 @@ showtL s   = let mid = div (lengthL s) 2
                  (l,r) = (takeL s mid) ||| (dropL s mid)
                 in NODE l r
 \end{lstlisting}
-\caption{Definicion de showtL}
+\caption{definición de showtL}
 \end{table}
 
 \begin{itemize}
@@ -346,7 +346,7 @@ contractL f [x]      = [x]
 contractL f (x:y:xs) = let (x',xs') = f x y ||| contractL f xs 
                         in x':xs'
 \end{lstlisting}
-\caption{Definicion de reduceL y contractL}
+\caption{definición de reduceL y contractL}
 \end{table}
 
 \begin{itemize}
@@ -417,7 +417,7 @@ scanL f e s   = let (l, res) = scanL f e (contractL f s)
                 in (expandL f l s, res)
 \end{lstlisting}
 
-\caption{Definicion de expandL y scanL}
+\caption{definición de expandL y scanL}
 \end{table}
 
 \begin{itemize}

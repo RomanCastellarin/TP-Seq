@@ -12,22 +12,22 @@ import Par((|||))
 (//) = div
     
 instance Seq A.Arr where
-   emptyS       = emptyA        -- optimal
-   singletonS   = singletonA    -- optimal
-   lengthS      = lengthA       -- optimal
-   nthS         = (!)           -- optimal
-   tabulateS    = tabulateA     -- optimal
-   mapS         = mapA          -- optimal
-   filterS      = filterA       -- optimal
-   appendS      = concatA       -- optimal
-   takeS        = takeA         -- optimal
-   dropS        = dropA         -- optimal
-   showtS       = showtA        -- optimal
-   showlS       = showlA        -- optimal
-   joinS        = flattenA      -- optimal
+   emptyS       = emptyA        
+   singletonS   = singletonA    
+   lengthS      = lengthA       
+   nthS         = (!)           
+   tabulateS    = tabulateA     
+   mapS         = mapA          
+   filterS      = filterA      
+   appendS      = concatA       
+   takeS        = takeA         
+   dropS        = dropA         
+   showtS       = showtA        
+   showlS       = showlA        
+   joinS        = flattenA     
    reduceS      = reduceA
    scanS        = scanA
-   fromList     = fromListA     -- optimal
+   fromList     = fromListA     
 
 emptyA = A.fromList []
 
@@ -88,10 +88,6 @@ scanA f e s = (scan_seq, scan_last)
 
 fromListA = A.fromList
 
--- ~ reduceA (\x->(\y->"("++x++"+"++y++")")) "E" (A.fromList ["0", "1", "2", "3", "4", "5", "6"])
-
--- ~ scanA (\x->(\y->x++"+"++y)) "E" (A.fromList ["0", "1", "2", "3", "4"])
--- ~ (<"E","E+0","E+0+1","E+0+1+2","E+0+1+2+3">,"E+0+1+2+3+4")
 
 -- ~ Testing
 
