@@ -403,7 +403,7 @@ contractL f (x:y:xs) = let (x',xs') = f x y ||| contractL f xs
 \end{itemize}
 
 
-\subsection{scanL es $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$ en trabajo, y $O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ prof.}
+\subsection{scanL es $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} W[x\oplus y])$ en trabajo, y $O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} S[x\oplus y])$ prof.}
 
 \begin{table}[h]
 \begin{lstlisting}
@@ -452,9 +452,9 @@ scanL f e s   = let (l, res) = scanL f e (contractL f s)
     $$ W_{scanL}(\oplus, e, 1) = c_1 + W[e \oplus x]  $$
     $$ W_{scanL}(\oplus, e, n) = c_2 + W_{contractL}(n) + W_{scanL}(\oplus, e, n/2) + W_{expandL}(n/2, n) $$
     
-    Notar que contractL y expandL de hecho tienen la misma estructura y sólo difieren en aplicaciones distintas, y ambos pueden ser acotados superiormente de una forma similar como en reduce: eligiendo la sumatoria de aplicaciones en $\mathcal{O}_r(\oplus,e,s)$, pues cada aplicación de $\oplus$ en cada ejecucion tanto de contractL como expandL es miembro de este conjunto, es decir
+    Notar que contractL y expandL de hecho tienen la misma estructura y sólo difieren en aplicaciones distintas, y ambos pueden ser acotados superiormente de una forma similar como en reduce: eligiendo la sumatoria de aplicaciones en $\mathcal{O}_s(\oplus,e,s)$, pues cada aplicación de $\oplus$ en cada ejecucion tanto de contractL como expandL es miembro de este conjunto, es decir
     
-    $$ W_{contractL}, W_{expandL} \in O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y]) $$
+    $$ W_{contractL}, W_{expandL} \in O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} W[x\oplus y]) $$
     
     Esto nos resulta muy útil porque ahora alteramos el orden de los términos en la ecuación anterior y vemos:
     
@@ -462,7 +462,7 @@ scanL f e s   = let (l, res) = scanL f e (contractL f s)
     
     Donde observamos la misma estructura que en reduce, con contractL y expandL igualmente acotados. Con el mismo razonamiento anterior de la serie geométrica nos queda:
     
-    $$ W_{scanL} \in O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y]) $$
+    $$ W_{scanL} \in O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} W[x\oplus y]) $$
     
 
 \item \textbf{Profundidad de scanL:}
@@ -474,11 +474,11 @@ scanL f e s   = let (l, res) = scanL f e (contractL f s)
     
     Con el mismo argumento anterior podemos ver que también acotamos a contractL y expandL:
     
-    $$ S_{contractL}, S_{expandL} \in O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y]) $$
+    $$ S_{contractL}, S_{expandL} \in O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} S[x\oplus y]) $$
     
     Y también tenemos $\log s$ recursiones, sin embargo ocurre lo mismo, pues seguimos teniendo $S_{expandL}$ el cual produce que la cota sea cuanto menos lineal. Por lo tanto:
     
-    $$ S_{scanL} \in O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y]) $$
+    $$ S_{scanL} \in O(|s| + \max\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} S[x\oplus y]) $$
     
 \end{itemize}
 
