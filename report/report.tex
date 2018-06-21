@@ -52,15 +52,15 @@ Juan Ignacio Suarez\\
 \end{titlepage}
 \newpage
 
-\section{Implementacion basada en Arrays Persistentes}
+\section{Implementacion basada en\\Arrays Persistentes}
 
 \begin{tabular}{@{}lcc@{}}
 \toprule
         & W & S \\ \midrule
 filterS p x & $O(|x| + \sum\limits_{i=0}^{|x|-1} W[p\ x_i])$  &  $(\log |x| + \max\limits_{i=0}^{|x|-1} S[p\ x_i])$  \\
-reduceS f e s & $ O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$  &  $ O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ \\
-scanS   & $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} W[x\oplus y])$  &  $O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} S[x\oplus y])$ \\
-showtS  & $O(1)$  &  $O(1)$ \\ \bottomrule
+reduceS $\oplus$ e s & $ O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$  &  $ O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$ \\
+scanS $\oplus$ e s  & $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} W[x\oplus y])$  &  $O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} S[x\oplus y])$ \\
+showtS s  & $O(1)$  &  $O(1)$ \\ \bottomrule
 \end{tabular}
 
 \subsection{filterA es $O(|x| + \sum\limits_{i=0}^{|x|-1} W[p\ x_i])$ en trabajo.\\ y $O(\log |x| + \max\limits_{i=0}^{|x|-1} S[p\ x_i])$ en profundidad.}
@@ -150,7 +150,7 @@ $$O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} W[x\oplus y])$$ 
 
 $$ O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_r(\oplus,e,s)} S[x\oplus y])$$ en profundidad.
 
-\subsubsection{scanA es $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} W[x\oplus y])$ en trabajo,\\
+\subsection{scanA es $O(|s| + \sum\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} W[x\oplus y])$ en trabajo,\\
 y $ O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} S[x\oplus y])$ en profundidad.}
 
 
@@ -189,7 +189,7 @@ Realicemos ahora un analisis general de costos.
 
 \item Para la profundidad, obtenemos $O(\max (S[scanA'], S[reduceA])) = $ $$O(\log |s|\cdot \max\limits_{(x\oplus y)\in\mathcal{O}_s(\oplus,e,s)} S[x\oplus y])$$
 \end{itemize}
-\subsubsection{showtA es $O(1)$ en trabajo y profundidad.}
+\subsection{showtA es $O(1)$ en trabajo y profundidad.}
 
 \begin{table}[h]
 \begin{lstlisting}
